@@ -11,13 +11,20 @@ const service = axios.create({
   timeout: 50000, // 請求超時時間
 });
 
-const tokenExpire = () => {
-  store.dispatch("FedLogOut").then(() => {
-    location.reload(); // 為了重新實例化vue-router對象 避免bug
-  });
-  // router.replace({
-  //   name: "Login",
-  // });
+const tokenExpire = (msg) => {
+  Vue.prototype.$alertM
+    .fire({
+      icon: "error",
+      title: `${msg}，將導頁至登入畫面`,
+    })
+    .then(() => {
+      store.dispatch("FedLogOut").then(() => {
+        location.reload(); // 為了重新實例化vue-router對象 避免bug
+      });
+      // router.replace({
+      //   name: "Login",
+      // });
+    });
 };
 
 // 錯誤捕捉
@@ -30,7 +37,7 @@ const errorHandle = (status, msg, response) => {
 
     case 401:
       console.log(response);
-      tokenExpire();
+      tokenExpire(msg);
       break;
 
     case 403:
@@ -111,6 +118,7 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    // console.log(error, errorHandle);
     Vue.prototype.$alertM.fire({
       icon: "error",
       title: error,
@@ -123,10 +131,11 @@ service.interceptors.response.use(
     //   duration: 10 * 1000,
     // });
     // return Promise.reject(error);
-    const { response } = error;
 
+    const { response } = error;
+    // console.log(response);
     if (response) {
-      errorHandle(response.status, response.data.error, response);
+      errorHandle(response.status, response.data.message, response);
       return Promise.reject(error);
     } else {
       return Promise.reject(error);
