@@ -341,24 +341,6 @@ export default {
     };
   },
   methods: {
-    //獲取特殊修改權限
-    getSpecialButtons() {
-      let router2 = this.$store.getters.modules;
-      let a = router2.filter((r) => {
-        return r.item.name == "用戶資料";
-      });
-      let b = a[0].children.filter((r2) => {
-        return r2.item.name == "全部用戶";
-      });
-      this.buttons = b[0].item.elements.map((btn) => {
-        return btn.domId;
-      });
-      // console.log(this.buttons);
-    },
-    // 是否擁有按鈕功能權限
-    hasButton(domId) {
-      return this.buttons.includes(domId);
-    },
     // 獲取用戶基本資料
     async getUserBasic() {
       const vm = this;
@@ -375,10 +357,10 @@ export default {
     getCaseUser() {
       const vm = this;
       caseUsers.get({ id: vm.$route.params.id.split("-")[1] }).then((res) => {
+        // console.log(res);
         vm.temp = Object.assign({}, res.result); // copy obj
         vm.temp.caseUserStatus = vm.temp.caseUserStatus.toString();
         vm.temp.disabilityLevel = vm.temp.disabilityLevel.toString();
-        console.log(res);
       });
     },
     /* 獲取A單位資料 */
@@ -471,7 +453,7 @@ export default {
   async mounted() {
     this.getUserBasic();
     this.taiwanCity = taiwan.cityAndCountiesLite;
-    this.getSpecialButtons();
+    // this.getSpecialButtons();
     await this.getUnitAs();
     this.getCaseUser();
   },

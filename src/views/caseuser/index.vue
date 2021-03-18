@@ -209,11 +209,12 @@ export default {
         return r.item.name == "用戶資料";
       });
       let b = a[0].children.filter((r2) => {
-        return r2.item.name == "全部用戶";
+        return r2.item.name == "長照用戶";
       });
       this.specialButtons = b[0].item.elements.map((btn) => {
         return btn.domId;
       });
+      console.log(this.specialButtons);
     },
 
     /* 是否擁有特殊按鈕功能權限 */
