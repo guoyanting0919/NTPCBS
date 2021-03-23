@@ -61,13 +61,6 @@
       <div class="rolesBox">
         <el-button v-if="hasButton('addCaseUser')" type="primary" plain @click="handleRole('1')">長照身份</el-button>
         <el-button v-if="hasButton('addSelfPayUser')" type="primary" plain @click="handleRole('2')">白牌身份</el-button>
-        <!-- <el-button
-          v-if="hasButton('addBusUser')"
-          type="primary"
-          plain
-          @click="handleRole('3')"
-          >幸福巴士身份</el-button
-        > -->
       </div>
     </el-dialog>
   </div>
@@ -113,16 +106,23 @@ export default {
   methods: {
     //獲取特殊修改權限
     getSpecialButtons() {
-      let router2 = this.$store.getters.modules;
-      let a = router2.filter((r) => {
-        return r.item.name == "用戶資料";
-      });
-      let b = a[0].children.filter((r2) => {
-        return r2.item.name == "全部用戶";
-      });
-      this.buttons = b[0].item.elements.map((btn) => {
-        return btn.domId;
-      });
+      let allRouter = this.$store.getters.modules;
+      let hasAllUserPage = allRouter
+        .filter((r) => r.item.name === "用戶資料")[0]
+        .children.map((r2) => r2.item.name)
+        .includes("全部用戶");
+      console.log(hasAllUserPage);
+      this.buttons = allRouter
+        .filter((r) => {
+          return r.item.name === "用戶資料";
+        })[0]
+        .children.filter((r2) => {
+          let pageName = hasAllUserPage ? "全部用戶" : "巴士用戶";
+          return r2.item.name === pageName;
+        })[0]
+        .item.elements.map((btn) => {
+          return btn.domId;
+        });
     },
     // 是否擁有按鈕功能權限
     hasButton(domId) {

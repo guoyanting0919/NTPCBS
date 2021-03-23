@@ -269,18 +269,23 @@ export default {
   methods: {
     /* 獲取特殊修改權限 */
     getSpecialButtons() {
-      let router2 = this.$store.getters.modules;
-      let a = router2.filter((r) => {
-        console.log(r.item.name);
-        return r.item.name == "用戶資料";
-      });
-      console.log(a);
-      let b = a[0].children.filter((r2) => {
-        return r2.item.name == "全部用戶";
-      });
-      this.buttons = b[0].item.elements.map((btn) => {
-        return btn.domId;
-      });
+      let allRouter = this.$store.getters.modules;
+      let hasAllUserPage = allRouter
+        .filter((r) => r.item.name === "用戶資料")[0]
+        .children.map((r2) => r2.item.name)
+        .includes("全部用戶");
+      console.log(hasAllUserPage);
+      this.buttons = allRouter
+        .filter((r) => {
+          return r.item.name === "用戶資料";
+        })[0]
+        .children.filter((r2) => {
+          let pageName = hasAllUserPage ? "全部用戶" : "長照用戶";
+          return r2.item.name === pageName;
+        })[0]
+        .item.elements.map((btn) => {
+          return btn.domId;
+        });
     },
 
     /* 是否擁有按鈕功能權限 */

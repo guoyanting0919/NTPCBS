@@ -38,7 +38,7 @@
         <el-date-picker @change="getList" size="mini" style="width: 350px; margin: 0 1rem" v-model="temp.dateRange" type="daterange" range-separator="至" start-placeholder="起始日期" end-placeholder="结束日期">
         </el-date-picker>
 
-        <el-input style="width: 200px; margin-right: 0.5rem" size="mini" v-model="listQuery.key" clearable placeholder="請輸入關鍵字"></el-input>
+        <el-input @keyup.enter.native="getList" style="width: 200px; margin-right: 0.5rem" size="mini" v-model="listQuery.key" clearable placeholder="請輸入關鍵字"></el-input>
 
         <el-select size="mini" @change="getList" v-model="listQuery.Status" placeholder="請選擇訂單狀態">
           <el-option label="所有狀態" :value="-1"></el-option>

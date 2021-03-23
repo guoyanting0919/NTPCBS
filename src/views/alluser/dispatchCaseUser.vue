@@ -105,7 +105,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :sm="24" :md="24">
+                <el-col :sm="24" :md="24" v-show="!isUnitB">
                   <div>
                     <span class="unitBTitle">優先搭乘車行排序 (請依序點擊完成排序)</span>
                     <div class="unitBContainer" v-if="roleOrgB">
@@ -361,6 +361,7 @@ export default {
       total: "",
 
       /* 全域資料 */
+      isUnitB: false,
       userInfo: "",
       roleInfo: "",
       orgBList: [],
@@ -558,6 +559,7 @@ export default {
           //若登入單位包含用戶所選B單位(B單位訂車)
           this.roleOrgB = this.orgBList.filter((i) => i.id === vm.defaultorgid);
           vm.handleOrgBSelect(vm.defaultorgid);
+          this.isUnitB = true;
         } else {
           this.roleOrgB = this.orgBList.filter((i) =>
             vm.useBunit.includes(i.id)

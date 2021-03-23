@@ -1,5 +1,5 @@
 <template>
-  <el-dialog @close="handleClose()" title="編輯訂單" :visible.sync="editDialog" width="800px">
+  <el-dialog :close-on-click-modal='false' @close="handleClose()" title="編輯訂單" :visible.sync="editDialog" width="800px">
     <div id="map" ref="map" style="width: 0%; height: 0%"></div>
     <div class="editDialogBody">
       <el-form :label-position="labelPosition" label-width="200px" :model="temp" :rules="rules" ref="form">

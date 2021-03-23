@@ -38,7 +38,7 @@
         <el-date-picker value-format="yyyy-MM-dd" @change="getList" placeholder="選擇日期" size="mini" style="width: 200px; margin: 0 " v-model="listQuery.StartDate" type="date">
         </el-date-picker>
 
-        <el-input style="width: 200px; margin-left: 0.5rem" size="mini" v-model="listQuery.key" clearable placeholder="請輸入關鍵字"></el-input>
+        <el-input @keyup.enter.native="getList" style="width: 200px; margin-left: 0.5rem" size="mini" v-model="listQuery.key" clearable placeholder="請輸入關鍵字"></el-input>
 
         <!-- 列表 -->
         <el-table ref="mainTable" :data="list" border fit highlight-current-row @selection-change="handleSelectionChange" style="width: 100% ;margin-top:8px">
@@ -1080,7 +1080,6 @@ export default {
       const vm = this;
       vm.editDialog = true;
       orderCaseUser.get({ id }).then((res) => {
-        console.log(res);
         vm.temp = Object.assign({}, res.result); // copy obj
         let fromRemark = ["醫院診所", "洗腎中心", "復健診所", "住家"].includes(
           vm.temp.fromAddrRemark

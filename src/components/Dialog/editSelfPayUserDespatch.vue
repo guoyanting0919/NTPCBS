@@ -28,7 +28,10 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="是否共乘">
-              <el-switch active-text="願意共乘" inactive-text="不共乘" v-model="temp.canShared"></el-switch>
+              <el-select style="width: 100%" v-model="temp.canShared" placeholder="是否共乘">
+                <el-option :value="true" label="願意共乘"></el-option>
+                <el-option :value="false" label="不共乘"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
 

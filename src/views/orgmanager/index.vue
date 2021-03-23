@@ -183,7 +183,7 @@
             </el-col>
 
             <el-col :span="12">
-              <el-form-item size="small" :label="'主要聯絡人市話'">
+              <el-form-item size="small" :label="'主要聯絡人市話'" prop="chargeTel">
                 <el-input v-model="temp.chargeTel"></el-input>
               </el-form-item>
             </el-col>
