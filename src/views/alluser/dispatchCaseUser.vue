@@ -99,7 +99,7 @@
                     <el-time-select @change="getDiscount" v-model="temp.time" :picker-options="{
                         start: timeStartTime,
                         step: '00:10',
-                        end: '20:00',
+                        end: '23:40',
                       }" placeholder="請選擇乘車時間" style="width: 100%">
                     </el-time-select>
                   </el-form-item>
@@ -205,7 +205,7 @@
                     <el-time-select :disabled="!temp.isBackTemp" v-model="temp.reTime" :picker-options="{
                         start: temp.time,
                         step: '00:10',
-                        end: '20:00',
+                        end: '23:40',
                       }" placeholder="請選擇回程乘車時間" style="width: 100%">
                     </el-time-select>
                   </el-form-item>
@@ -436,7 +436,7 @@ export default {
     timeStartTime() {
       let time;
       if (this.temp.date !== this.today) {
-        time = "06:00";
+        time = "05:00";
       } else {
         let nowHr = moment().format("HH");
         this.$cl(nowHr);
