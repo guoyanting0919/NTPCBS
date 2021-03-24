@@ -91,7 +91,7 @@
             </div>
             <div class="orderRight">
               <div class="orderRightTitle">
-                <el-button v-if="order.hasViolation" style="padding: 0px 10px" type="danger" @click="handleViolation(order)">記點</el-button>
+
                 <p class="orderStatus">
                   <OrderStatusTag :type="orderStatusMapping[order.status - 1]" :cancelRemark="cancelRemarkList[order.cancelReamrk]"></OrderStatusTag>
                 </p>
@@ -99,23 +99,24 @@
               <div class="orderRightDetail">
                 <div class="rightBtnBox">
                   <button class="orderButton orderDetail" @click="handleCheck(order)">
-                    查看訂單
+                    查看
+                  </button>
+                  <button @click="handleDespatch(order)" class="orderButton orderStatus" v-if="hasButton('dispatch')">
+                    預約
                   </button>
                   <button class="orderButton orderEdit" @click="
                       editDialog = true;
                       getOrder(order.id);
-                    " v-if="(order.status == 1 || order.status == 2 || order.status == 3) && hasButton('edit') ">
-                    編輯訂單
+                    " v-if=" order.status <=3 && hasButton('edit') ">
+                    編輯
                   </button>
-                  <button @click="handleDespatch(order)" class="orderButton orderStatus" v-if="hasButton('dispatch')">
-                    快速預約
+
+                  <button class="orderButton orderCancel" v-if="order.status <= 2" @click="handleCancelOrder(order)">
+                    取消
                   </button>
-                  <button class="orderButton orderCancel" v-if="order.status == 1" @click="handleCancelOrder(order)">
-                    取消訂單
-                  </button>
-                  <!-- <button class="orderButton orderCancel" v-if="order.status == 2" @click="handleCancelDispatch(order.despatchNo)">
-                    取消排班
-                  </button> -->
+                  <el-button class="orderButton orderCancel" v-if="order.cancelReamrk === 'SYS_ORDERCANCEL_REMARK_DRIVER'" @click="handleViolation(order)">
+                    記點
+                  </el-button>
                 </div>
               </div>
             </div>
@@ -130,15 +131,121 @@
     <EditDialog :tempObj="temp" :editDialogProp="editDialog" :carCategorysList="carCategorysList" @handleEdit="handleEdit" @handleClose="handleClose"></EditDialog>
 
     <!-- violation dialog -->
-    <el-dialog title="記點" :visible.sync="violationDialog" width="475px">
-      <el-form ref="dataForm" :model="violationTemp" label-position="right" label-width="80px">
+    <el-dialog title="記點" :visible.sync="violationDialog" width="900px">
+
+      <el-row :gutter="16">
+        <el-col :sm="24" :md="12">
+          <div class="greyBox">
+            <el-row :gutter="16">
+              <el-col :sm="12">
+                <div class="greyLabel">個案姓名</div>
+                <div class="greyValue">{{violationOrderTemp.userName}}</div>
+              </el-col>
+
+              <el-col :sm="12">
+                <div class="greyLabel">身分證字號</div>
+                <div class="greyValue">{{violationOrderTemp.userUID}}</div>
+              </el-col>
+
+              <el-col :sm="12">
+                <div class="greyLabel">個案編號</div>
+                <div class="greyValue">{{violationOrderTemp.caseUserNo}}</div>
+              </el-col>
+
+              <el-col :sm="12">
+                <div class="greyLabel">訂單狀態</div>
+                <div class="greyValue">
+                  <OrderStatusTag :type="orderStatusMapping[violationOrderTemp.status - 1]" size="mini"></OrderStatusTag>
+                </div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">乘車時間</div>
+                <div class="greyValue">{{violationOrderTemp.reserveDate | dateFilter}}</div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">訂單編號</div>
+                <div class="greyValue">{{violationOrderTemp.orderNo}}</div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">
+                  起點
+                  <el-tooltip class="item" effect="dark" :content="violationOrderTemp.fromAddrRemark" placement="top-start">
+                    <i class="iconfont icon-InfoCircle"></i>
+                  </el-tooltip>
+                </div>
+                <div class="greyValue">{{violationOrderTemp.fromAddr}}</div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">
+                  迄點
+                  <el-tooltip class="item" effect="dark" :content="violationOrderTemp.toAddrRemark" placement="top-start">
+                    <i class="iconfont icon-InfoCircle"></i>
+                  </el-tooltip>
+                </div>
+                <div class="greyValue">{{violationOrderTemp.toAddr}}</div>
+              </el-col>
+            </el-row>
+          </div>
+
+          <div class="cancelBottom">
+            <el-row :gutter="16">
+              <el-col :sm="24">
+                <div class="greyLabel">承接車行</div>
+                <div class="greyValue">{{violationOrderTemp.orgName}}</div>
+              </el-col>
+
+              <el-col :sm="12">
+                <div class="greyLabel">車種</div>
+                <div class="greyValue">{{violationOrderTemp.carCategoryName}}</div>
+              </el-col>
+
+              <el-col :sm="12">
+                <div class="greyLabel">共乘</div>
+                <div class="greyValue">{{violationOrderTemp.canShared ? '願意共乘' : '不可共乘'}}</div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">建單時間</div>
+                <div class="greyValue">{{violationOrderTemp.createDate }}</div>
+              </el-col>
+
+              <el-col :sm="24">
+                <div class="greyLabel">建單者組織</div>
+                <div class="greyValue">???</div>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
+
+        <el-col :sm="24" :md="12">
+          <h2 class="cancelViolateTitle">目前累計違規點數 ??? 點</h2>
+          <h4 class="cancelTodo">一、若於預約時間十分鐘後，未抵達約定乘車地點，視同放棄當次服務，駕駛員回報中心並離開進行下個服務，記違規1點。</h4>
+          <h4 class="cancelTodo">二、乘車日前(48小時)未申請更改或取消服務者， 記違規1點。</h4>
+          <h4 class="cancelTodo">三、累積違規3點後，停止服務2週，懲處完畢後歸0，重新累積記點規範。</h4>
+          <el-form ref="cancelForm" :model="violationTemp" label-position="right" label-width="80px">
+            <el-form-item size="mini" :label="'記點點數'">
+              <el-input-number v-model="violationTemp.point" :min="0" :max="5"></el-input-number>
+            </el-form-item>
+            <el-form-item required size="mini" :label="'記點原因'">
+              <el-input type="textarea" v-model="violationTemp.remark" :autosize="{ minRows: 6, maxRows: 6}"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-col>
+
+      </el-row>
+
+      <!-- <el-form ref="dataForm" :model="violationTemp" label-position="right" label-width="80px">
         <el-form-item size="mini" :label="'記點點數'">
           <el-input-number v-model="violationTemp.point" :min="0" :max="10"></el-input-number>
         </el-form-item>
         <el-form-item size="mini" :label="'記點原因'">
           <el-input v-model="violationTemp.remark"></el-input>
         </el-form-item>
-      </el-form>
+      </el-form> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="violationDialog = false">取 消</el-button>
         <el-button type="danger" @click="handleConfirmViolation">確 定</el-button>
@@ -358,13 +465,8 @@ export default {
       },
 
       /* 記點temp */
-      violationTemp: {
-        userId: "",
-        caseUserId: "",
-        orderId: "",
-        point: 0,
-        remark: "",
-      },
+      violationOrderTemp: {},
+      violationTemp: { point: 0, remark: "" },
 
       /* 取消訂單temp */
       cancelOrderTemp: {},
@@ -501,27 +603,88 @@ export default {
     },
 
     /* 記點 */
-    handleViolation({ caseUserId, userId, id }) {
+    handleViolation({ id, userId }) {
       const vm = this;
-      vm.violationDialog = true;
-      vm.violationTemp = {
-        ...this.violationTemp,
-        caseUserId,
-        userId,
-        orderId: id,
-      };
+
+      orderCaseUser.getDetail({ orderId: id }).then((res) => {
+        vm.violationOrderTemp = { ...res.result, userId };
+
+        vm.$nextTick(() => {
+          vm.violationDialog = true;
+        });
+      });
     },
 
     /* 確認記點 */
     handleConfirmViolation() {
       const vm = this;
       this.$cl(vm.violationTemp);
-      orderCaseUser.violation(vm.violationTemp).then((res) => {
-        this.$cl(res);
-        vm.violationTemp.point = 0;
-        vm.violationTemp.remark = "";
-        vm.violationDialog = false;
+      if (vm.violationTemp.remark == "") {
+        vm.$alertT.fire({
+          icon: "error",
+          title: "請填寫記點原因",
+        });
+      } else {
+        this.violationTemp.caseUserId = this.violationOrderTemp.caseUserId;
+        this.violationTemp.orderId = this.violationOrderTemp.id;
+        this.violationTemp.userId = this.violationOrderTemp.userId;
+        console.log(this.violationOrderTemp, this.violationTemp);
+        orderCaseUser.violation(vm.violationTemp).then((res) => {
+          this.$cl(res);
+          vm.violationTemp.point = 0;
+          vm.violationTemp.remark = "";
+          vm.violationDialog = false;
+        });
+
+        //         {
+        //   "userId": "string",
+        //   "caseUserId": "string",
+        //   "orderId": "string",
+        //   "point": 0,
+        //   "remark": "string"
+        // }
+      }
+    },
+
+    /* 取消訂單 */
+    handleCancelOrder({ id }) {
+      const vm = this;
+      orderCaseUser.getDetail({ orderId: id }).then((res) => {
+        vm.cancelOrderTemp = res.result;
+        vm.$nextTick(() => {
+          vm.cancelDialog = true;
+        });
       });
+    },
+
+    /* 確認取消訂單 */
+    handleConfirmCancel() {
+      const vm = this;
+      if (vm.cancelTemp.remark == "") {
+        vm.$alertT.fire({
+          icon: "error",
+          title: "請填寫記點原因",
+        });
+      } else {
+        let params = {
+          cancelRemark: "SYS_ORDERCANCEL_REMARK_ADMIN",
+          hasVilation: true,
+          id: vm.cancelOrderTemp.id,
+          point: vm.cancelTemp.point,
+          remark: vm.cancelTemp.remark,
+        };
+        console.log(params);
+        orderCaseUser.cancel(params).then((res) => {
+          vm.$alertT.fire({
+            icon: "success",
+            title: res.message,
+          });
+          vm.cancelTemp.point = 0;
+          vm.cancelTemp.remark = "";
+          vm.cancelDialog = false;
+          vm.getList();
+        });
+      }
     },
 
     /* 篩選訂單狀態 */
@@ -574,49 +737,6 @@ export default {
         });
         vm.getList();
       });
-    },
-
-    /* 取消訂單 */
-    handleCancelOrder({ id }) {
-      const vm = this;
-      vm.$cl(id);
-      orderCaseUser.getDetail({ orderId: id }).then((res) => {
-        this.$cl(res);
-        vm.cancelOrderTemp = res.result;
-        vm.$nextTick(() => {
-          vm.cancelDialog = true;
-        });
-      });
-    },
-
-    /* 確認取消訂單 */
-    handleConfirmCancel() {
-      const vm = this;
-      if (vm.cancelTemp.remark == "") {
-        vm.$alertT.fire({
-          icon: "error",
-          title: "請填寫記點原因",
-        });
-      } else {
-        let params = {
-          cancelRemark: "SYS_ORDERCANCEL_REMARK_ADMIN",
-          hasVilation: true,
-          id: vm.cancelOrderTemp.id,
-          point: vm.cancelTemp.point,
-          remark: vm.cancelTemp.remark,
-        };
-        console.log(params);
-        orderCaseUser.cancel(params).then((res) => {
-          vm.$alertT.fire({
-            icon: "success",
-            title: res.message,
-          });
-          vm.cancelTemp.point = 0;
-          vm.cancelTemp.remark = "";
-          vm.cancelDialog = false;
-          vm.getList();
-        });
-      }
     },
 
     /* 檢視訂單 */

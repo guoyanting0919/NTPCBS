@@ -7,7 +7,7 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="聯絡電話" prop="noticePhone">
-              <el-input :disabled="tempObj.status > 2" style="width: 100%" v-model="temp.noticePhone">
+              <el-input style="width: 100%" v-model="temp.noticePhone">
               </el-input>
             </el-form-item>
           </el-col>
