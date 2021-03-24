@@ -291,7 +291,7 @@
               <el-col :sm="12" :md="8">
                 <div class="inputBox">
                   <div class="inputLable">實際應收</div>
-                  <div class="inputValue">{{pay.receivePay}} </div>
+                  <div class="inputValue">{{pay.realSelfPay + pay.realWithAmt }} </div>
                 </div>
               </el-col>
 
