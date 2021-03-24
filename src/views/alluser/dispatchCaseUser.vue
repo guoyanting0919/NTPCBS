@@ -695,11 +695,28 @@ export default {
                 //修改迄點 (身份居住地址)
                 backTemp.toAddr = `${vm.roleInfo.county}${vm.roleInfo.district}${vm.roleInfo.addr}`;
                 vm.$cl(backTemp);
-                orderCaseUser.add(backTemp).then(() => {
-                  this.$router.go(-1);
+                orderCaseUser.add(backTemp).then((resB) => {
+                  if (resB.code == 200) {
+                    this.$router.go(-1);
+                    vm.$alertT.fire({
+                      icon: "success",
+                      title: resB.message,
+                    });
+                  } else {
+                    vm.$alertM.fire({
+                      icon: "error",
+                      title: "回程預約失敗，該區間已訂車，可至搭乘紀錄查詢。",
+                    });
+                  }
                 });
               } else {
-                this.$router.go(-1);
+                if (res.code == 200 && !vm.temp.isBackTemp) {
+                  this.$router.go(-1);
+                  vm.$alertT.fire({
+                    icon: "success",
+                    title: res.message,
+                  });
+                }
               }
             });
           } else {

@@ -440,10 +440,10 @@ export default {
             this.$cl(vm.temp);
             orderSelfPayUser.add(vm.temp).then((res) => {
               vm.$alertT.fire({
-                icon: "success",
+                icon: res.code == 200 ? "success" : "error",
                 title: res.message,
               });
-              this.handleBack();
+              if (res.code == 200) this.handleBack();
             });
           } else {
             vm.$alertM.fire({
