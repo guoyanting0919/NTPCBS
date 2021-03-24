@@ -105,6 +105,7 @@
                   </el-form-item>
                 </el-col>
 
+                <!-- v-show="!isUnitB" -->
                 <el-col :sm="24" :md="24" v-show="!isUnitB">
                   <div>
                     <span class="unitBTitle">優先搭乘車行排序 (請依序點擊完成排序)</span>
@@ -526,9 +527,9 @@ export default {
     /* 複製訂單 */
     handleCopy(order) {
       const vm = this;
-      console.log(order);
+      console.log(order, order.orgId);
       vm.temp = Object.assign({}, order); // copy obj
-      vm.$set(this.temp, "transOrgs", []);
+      vm.$set(this.temp, "transOrgs", [order.orgId]);
       // vm.temp.isBackTemp = false;
       vm.$set(this.temp, "isBackTemp", false);
       vm.$set(this.temp, "reTime", null);

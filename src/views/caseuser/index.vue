@@ -359,6 +359,9 @@ export default {
         case "violationBtn":
           this.violationDialog = true;
           break;
+        case "search":
+          this.getList();
+          break;
         default:
           break;
       }
