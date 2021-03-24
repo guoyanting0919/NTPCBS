@@ -14,7 +14,7 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="車種" prop="carCategoryId">
-              <el-select :disabled="tempObj.status > 2" style="width: 100%" v-model="temp.carCategoryId" placeholder="選擇車種" @change="temp.wheelchairType = ''">
+              <el-select :disabled="tempObj.status >= 2" style="width: 100%" v-model="temp.carCategoryId" placeholder="選擇車種" @change="temp.wheelchairType = ''">
                 <el-option v-for="type in carCategorysList" :key="type.id" :label="type.label" :value="type.value">
                 </el-option>
               </el-select>
@@ -23,7 +23,7 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="輪椅" prop="wheelchairType">
-              <el-select :disabled="tempObj.status > 2" clearable v-model="temp.wheelchairType" placeholder="請選擇輪椅" style="width: 100%">
+              <el-select :disabled="tempObj.status >= 2" clearable v-model="temp.wheelchairType" placeholder="請選擇輪椅" style="width: 100%">
                 <el-option v-if="temp.carCategoryId === 'SYS_CAR_GENERAL'" value="無" label="無">無</el-option>
                 <el-option v-if="temp.carCategoryId === 'SYS_CAR_GENERAL'" value="普通輪椅(可收折)" label="普通輪椅(可收折)">普通輪椅(可收折)</el-option>
                 <el-option v-if="temp.carCategoryId === 'SYS_CAR_WEAL'" value="普通輪椅" label="普通輪椅">普通輪椅</el-option>
@@ -36,7 +36,7 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="願意共乘">
-              <el-radio-group :disabled="tempObj.status > 2" v-model="temp.canShared">
+              <el-radio-group :disabled="tempObj.status >= 2" v-model="temp.canShared">
                 <el-radio :label="true">是</el-radio>
                 <el-radio :label="false">否</el-radio>
               </el-radio-group>
@@ -66,7 +66,7 @@
 
           <el-col :sm="12" :md="8">
             <el-form-item label="陪同人數" prop="familyWith">
-              <el-select :disabled="tempObj.status > 2" style="width: 100%" v-model="temp.familyWith" placeholder="選擇陪同人數">
+              <el-select :disabled="tempObj.status >= 2" style="width: 100%" v-model="temp.familyWith" placeholder="選擇陪同人數">
                 <el-option v-for="num in 8" :key="num" :label="num - 1" :value="num - 1">
                 </el-option>
               </el-select>
