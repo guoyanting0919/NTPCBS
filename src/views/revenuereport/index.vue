@@ -12,9 +12,9 @@
         <!-- 社會福利身份選擇 -->
         <el-select size="mini" @change="getList" v-model="listQuery.WealTypeId" placeholder="社會福利身份">
           <el-option :value="''" :label="'所有社會福利身份'">所有社會福利身份</el-option>
-          <el-option :value="'1'" :label="'低收入戶'">低收入戶</el-option>
-          <el-option :value="'2'" :label="'中低收入戶'">中低收入戶</el-option>
-          <el-option :value="'3'" :label="'一般戶'">一般戶</el-option>
+          <el-option :value="'0'" :label="'低收入戶'">低收入戶</el-option>
+          <el-option :value="'1'" :label="'中低收入戶'">中低收入戶</el-option>
+          <el-option :value="'2'" :label="'一般戶'">一般戶</el-option>
         </el-select>
 
         <!-- 日期選擇 -->

@@ -14,7 +14,7 @@ export function get(params) {
     params,
   });
 }
- 
+
 export function add(data) {
   return request({
     url: "/caseusers/addorupdate",
@@ -27,6 +27,24 @@ export function add(data) {
 export function updateUnitB(data) {
   return request({
     url: "/caseusers/updateorgb",
+    method: "post",
+    data,
+  });
+}
+
+// 社會福利身份變更紀錄
+export function getWealTypeList(params) {
+  return request({
+    url: "/caseusers/LoadWealType",
+    method: "get",
+    params,
+  });
+}
+
+// 修改社會福利身份
+export function changeWealType(data) {
+  return request({
+    url: "/caseusers/PostCaseUserWealType",
     method: "post",
     data,
   });

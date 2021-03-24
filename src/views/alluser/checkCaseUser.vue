@@ -26,9 +26,9 @@
               <el-form-item label="社會福利身份" prop="wealTypeId">
                 <span class="wealSpan" slot="label">社會福利身份 </span>
                 <el-select disabled v-model="temp.wealTypeId" placeholder="社會福利身份" style="width: 100%">
-                  <el-option :value="'1'" :label="'低收入戶'">低收入戶</el-option>
-                  <el-option :value="'2'" :label="'中低收入戶'">中低收入戶</el-option>
-                  <el-option :value="'3'" :label="'一般戶'">一般戶</el-option>
+                  <el-option :value="'0'" :label="'低收入戶'">低收入戶</el-option>
+                  <el-option :value="'1'" :label="'中低收入戶'">中低收入戶</el-option>
+                  <el-option :value="'2'" :label="'一般戶'">一般戶</el-option>
                 </el-select>
               </el-form-item>
             </el-col>

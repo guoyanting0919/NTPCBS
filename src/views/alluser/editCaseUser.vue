@@ -28,9 +28,9 @@
                   <el-button v-if="hasButton('editWealType')" class="wealBtn" type="info" size="mini" @click="wealTypeDialog = true">修改</el-button>
                 </span>
                 <el-select disabled v-model="temp.wealTypeId" placeholder="社會福利身份" style="width: 100%">
-                  <el-option :value="'1'" :label="'低收入戶'">低收入戶</el-option>
-                  <el-option :value="'2'" :label="'中低收入戶'">中低收入戶</el-option>
-                  <el-option :value="'3'" :label="'一般戶'">一般戶</el-option>
+                  <el-option :value="'0'" :label="'低收入戶'">低收入戶</el-option>
+                  <el-option :value="'1'" :label="'中低收入戶'">中低收入戶</el-option>
+                  <el-option :value="'2'" :label="'一般戶'">一般戶</el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -167,21 +167,56 @@
     </div>
 
     <!-- wealTypeDialog -->
-    <el-dialog title="修改社會福利身份" :visible.sync="wealTypeDialog" width="30%">
-      <el-select v-model="temp.wealTypeId" placeholder="社會福利身份" style="width: 100%">
-        <el-option :value="'1'" :label="'低收入戶'">低收入戶</el-option>
-        <el-option :value="'2'" :label="'中低收入戶'">中低收入戶</el-option>
-        <el-option :value="'3'" :label="'一般戶'">一般戶</el-option>
-      </el-select>
+    <el-dialog @open='wealTypeForm.wealTypeId = temp.wealTypeId' title="修改社會福利身份" :visible.sync="wealTypeDialog" width="600px">
+      <el-form ref="wealTypeForm" :model="wealTypeForm" label-width="100px">
+        <el-form-item label="社會福利身份">
+          <el-select v-model="wealTypeForm.wealTypeId" placeholder="社會福利身份" style="width: 100%">
+            <el-option :value="'0'" :label="'低收入戶'">低收入戶</el-option>
+            <el-option :value="'1'" :label="'中低收入戶'">中低收入戶</el-option>
+            <el-option :value="'2'" :label="'一般戶'">一般戶</el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="生效方式">
+          <el-radio-group v-model="wealTypeForm.resourceType">
+            <el-radio label="立即生效"></el-radio>
+            <el-radio label="次月生效"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+
+      <el-table :data="wealTypeList" style="width: 100%">
+        <el-table-column prop="wealTypeName" label="異動狀況" align="center">
+          <template slot-scope="scope">
+            轉為{{ scope.row.wealTypeName}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createDate" label="異動日期" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.createDate | globalDateFilter('yyyy-MM-DD')}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="startDate" label="生效日" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.startDate | globalDateFilter('yyyy-MM-DD')}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="createUserName" label="異動人員" align="center"></el-table-column>
+      </el-table>
       <span slot="footer" class="dialog-footer">
         <el-button @click="wealTypeDialog = false">取 消</el-button>
-        <el-button type="primary" @click="wealTypeDialog = false">確 定</el-button>
+        <el-button type="primary" @click="handleConfirmWealtype">確 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+
 import Sticky from "@/components/Sticky";
 import Title from "@/components/ConsoleTableTitle";
 import SubTitle from "@/components/SubTitle";
@@ -264,6 +299,24 @@ export default {
         reviewDate: [{ required: true, message: "必填欄位" }],
         wealTypeId: [{ required: true, message: "必填欄位", tigger: "change" }],
       },
+
+      /* 社會福利身份變更紀錄 */
+      wealTypeList: [],
+      wealTypeListQuery: {
+        caseUserId: "",
+        page: 1,
+        limit: 10,
+      },
+
+      /* 變更社會福利身份表單 */
+      wealTypeForm: {
+        resourceType: "立即生效",
+
+        caseUserId: "",
+        startDate: "",
+        wealTypeId: "",
+        wealTypeName: "",
+      },
     };
   },
   methods: {
@@ -338,12 +391,51 @@ export default {
       });
     },
 
+    /* 獲取社會福利身份變更紀錄 */
+    getWealTypeList() {
+      const vm = this;
+      vm.wealTypeListQuery.caseUserId = vm.$route.params?.id.split("-")[1];
+      caseUsers.getWealTypeList(vm.wealTypeListQuery).then((res) => {
+        console.log(res);
+        vm.wealTypeList = res.data;
+      });
+    },
+
+    /* 確認變更社會福利身份 */
+    handleConfirmWealtype() {
+      const vm = this;
+      //判斷社會利身份是否不同
+      let isChange = vm.wealTypeForm.wealTypeId !== vm.temp.wealTypeId;
+
+      if (isChange) {
+        //判斷是否立即生效
+        let isNow = vm.wealTypeForm.resourceType === "立即生效";
+        if (isNow) {
+          vm.wealTypeForm.startDate = new Date();
+        } else {
+          vm.wealTypeForm.startDate = moment()
+            .month(moment().month() + 1)
+            .startOf("month")
+            .format("YYYY-MM-DD");
+        }
+
+        vm.wealTypeForm.caseUserId = this.$route.params.id.split("-")[1];
+        vm.wealTypeForm.wealTypeName = ["低收入戶", "中低收入戶", "一般戶"][
+          vm.wealTypeForm.wealTypeId
+        ];
+        caseUsers.changeWealType(vm.wealTypeForm).then(() => {
+          vm.getCaseUser();
+          vm.getWealTypeList();
+        });
+      }
+      vm.wealTypeDialog = false;
+    },
+
     /* 儲存 */
     handleSave() {
       const vm = this;
       vm.$refs.form.validate((valid) => {
         if (valid) {
-          console.log(vm.temp);
           caseUsers.add(vm.temp).then((res) => {
             vm.$alertT.fire({
               icon: res.code == 200 ? "success" : "error",
@@ -368,6 +460,7 @@ export default {
     this.getUnitAs();
     this.taiwanCity = taiwan.cityAndCountiesLite;
     this.getSpecialButtons();
+    this.getWealTypeList();
   },
 };
 </script>
