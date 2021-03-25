@@ -261,6 +261,23 @@
         <el-button type="primary" @click="confirmUnitB">確 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- applyDialog -->
+    <el-dialog @open='applyTemp.UID = ""' title="查詢" :visible.sync="applyDialog" width="30%">
+      <el-form :label-position="labelPosition" label-width="200px" :model="applyTemp" ref="applyTemp">
+        <el-row :gutter="16">
+          <el-col :sm="24" :md="24">
+            <el-form-item label="身分證字號" prop="uid">
+              <el-input v-model="applyTemp.UID" placeholder="請輸入身分證字號"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="applyDialog = false">取 消</el-button>
+        <el-button type="primary" @click="checkApplyUid">確 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -407,6 +424,13 @@ export default {
       total: 0,
       multipleSelection: [], // 列表checkbox選中的值
 
+      //申請temp
+      applyDialog: false,
+      applyUserId: "",
+      applyTemp: {
+        UID: "",
+      },
+
       // 表單相關
       labelPosition: "top",
       userTemp: {
@@ -422,6 +446,7 @@ export default {
         status: 1,
         organizationIds: "",
       },
+
       caseUserTemp: {
         userId: "", //用戶id
         id: "", //身份id
@@ -515,6 +540,46 @@ export default {
     },
   },
   methods: {
+    /* 檢查身分證字號是否申請過用戶 */
+    checkApplyUid() {
+      const vm = this;
+      if (vm.applyTemp.UID) {
+        users.checkApplyUid(vm.applyTemp).then((res) => {
+          let isNew = res.code == 500;
+          vm.$alertT.fire({
+            icon: isNew ? "info" : "success",
+            title: isNew
+              ? "該身分證字號尚未申請用戶，請填寫基本資料"
+              : "請選擇欲申請身份",
+          });
+
+          if (isNew) {
+            vm.applyDialog = false;
+            vm.userTemp.uid = vm.applyTemp.UID;
+            vm.handleAddOrEdit("add");
+          } else {
+            console.log(res.data[0]?.userId);
+            this.multipleSelection.push({ id: res.data[0]?.userId });
+            vm.applyDialog = false;
+            let map = ["selfpayuser", "bususer", "caseuser"];
+            let userRole = res.data.map((item) => item.userType);
+            vm.canUseRoles = map.filter(function (v) {
+              return userRole.indexOf(v) == -1;
+            });
+            console.log(vm.canUseRoles);
+            // vm.canUseRoles = ["selfpayuser", "bususer", "caseuser"];
+            vm.$nextTick(() => {
+              vm.rolesDialog = true;
+            });
+          }
+        });
+      } else {
+        vm.$alertT.fire({
+          icon: "error",
+          title: "請輸入身分證字號",
+        });
+      }
+    },
     // 是否為移動端
     isMobile() {
       const vm = this;
@@ -840,6 +905,7 @@ export default {
     },
     //檢查用戶身份
     handleCheckRoles(user) {
+      console.log(user);
       const vm = this;
       let params = {
         userId: user.id,
@@ -865,7 +931,7 @@ export default {
         password: "",
         name: "",
         birthday: "",
-        uid: "",
+        uid: this.applyTemp.UID,
         phone: "",
         sex: "",
         status: 1,
@@ -902,8 +968,8 @@ export default {
           this.handleUnitB(this.multipleSelection[0]);
           break;
         case "add":
-          // this.$router.push("/alluser/add/1");
-          this.handleAddOrEdit("add");
+          this.applyDialog = true;
+          // this.handleAddOrEdit("add");
           break;
         case "editBasic":
           if (this.multipleSelection.length !== 1) {

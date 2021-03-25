@@ -112,3 +112,12 @@ export function CheckRole(params) {
     params,
   });
 }
+
+/* 檢查身分證字號是否申請過用戶 */
+export function checkApplyUid(params) {
+  return request({
+    url: "/users/GetUnPermissionUserType",
+    method: "get",
+    params,
+  });
+}
