@@ -295,11 +295,12 @@ export default {
     },
   },
 };
-</script>
+</script> 
 <style lang="scss">
 .select-users-wrap {
   .part-box {
     border: none;
+    width: 40%;
   }
   .table-box {
     border: 1px solid #e4e4e4;

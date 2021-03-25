@@ -83,7 +83,7 @@
         <access-resource ref="accessResource" v-if="dialogAccessResource" :role-id="multipleSelection[0].id" @close="dialogAccessResource = false"></access-resource>
       </el-dialog>
       <!-- 添加角色用戶 -->
-      <el-dialog class="dialog-mini user-dialog" v-el-drag-dialog :title="'添加單位權限'" :visible.sync="roleUsers.dialogUserResource">
+      <el-dialog width='90%' class="dialog-mini user-dialog" v-el-drag-dialog :title="'添加單位權限'" :visible.sync="roleUsers.dialogUserResource">
         <selectUsersCom ref="selectUser" v-if="roleUsers.dialogUserResource" :hiddenFooter="true" :loginKey="'loginUser'" :selectUsers.sync="
             roleUsers.rowIndex > -1 && roleUsers.list[roleUsers.rowIndex]
           "></selectUsersCom>
