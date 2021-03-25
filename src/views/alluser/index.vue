@@ -312,81 +312,120 @@ export default {
     elDragDialog,
   },
   data() {
-    // 身份證字號驗證
-    // let checkUid = (rule, value, callback) => {
-    //   // 依照字母的編號排列，存入陣列備用。
-    //   let letters = new Array(
-    //     "A",
-    //     "B",
-    //     "C",
-    //     "D",
-    //     "E",
-    //     "F",
-    //     "G",
-    //     "H",
-    //     "J",
-    //     "K",
-    //     "L",
-    //     "M",
-    //     "N",
-    //     "P",
-    //     "Q",
-    //     "R",
-    //     "S",
-    //     "T",
-    //     "U",
-    //     "V",
-    //     "X",
-    //     "Y",
-    //     "W",
-    //     "Z",
-    //     "I",
-    //     "O"
-    //   );
-    //   // 儲存各個乘數
-    //   let multiply = new Array(1, 9, 8, 7, 6, 5, 4, 3, 2, 1);
-    //   let nums = new Array(2);
-    //   let firstChar;
-    //   let firstNum;
-    //   let lastNum;
-    //   let total = 0;
-    //   if (!value) {
-    //     return callback(new Error("請輸入分證字號"));
-    //   } else {
-    //     let regExpID = /^[a-z](1|2)\d{8}$/i;
-    //     if (value.search(regExpID) == -1) {
-    //       return callback(new Error("格式錯誤"));
-    //     } else {
-    //       // 取出第一個字元和最後一個數字。
-    //       firstChar = value.charAt(0).toUpperCase();
-    //       lastNum = value.charAt(9);
-    //     }
-    //     for (let i = 0; i < 26; i++) {
-    //       if (firstChar == letters[i]) {
-    //         firstNum = i + 10;
-    //         nums[0] = Math.floor(firstNum / 10);
-    //         nums[1] = firstNum - nums[0] * 10;
-    //         break;
-    //       }
-    //     }
-    //     // 執行加總計算
-    //     for (let i = 0; i < multiply.length; i++) {
-    //       if (i < 2) {
-    //         total += nums[i] * multiply[i];
-    //       } else {
-    //         total += parseInt(value.charAt(i - 1)) * multiply[i];
-    //       }
-    //     }
-    //     // 和最後一個數字比對
-    //     if (10 - (total % 10) != lastNum && 10 - (total % 10) != 10) {
-    //       // console.log(10 - (total % 10), lastNum);
-    //       return callback(new Error("格式錯誤"));
-    //     } else {
-    //       // console.log(10 - (total % 10), lastNum);
-    //       callback();
-    //     }
-    //   }
-    // };
+    /* 身份證字號驗證 */
+    let checkUid = (rule, value, callback) => {
+      // 依照字母的編號排列，存入陣列備用。
+      let letters = new Array(
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "X",
+        "Y",
+        "W",
+        "Z",
+        "I",
+        "O"
+      );
+      // 儲存各個乘數
+      let multiply = new Array(1, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+      let nums = new Array(2);
+      let firstChar;
+      let firstNum;
+      let lastNum;
+      let total = 0;
+      if (!value) {
+        return callback(new Error("請輸入分證字號"));
+      } else {
+        let regExpID = /^[a-z](1|2)\d{8}$/i;
+        if (value.search(regExpID) == -1) {
+          return callback(new Error("格式錯誤"));
+        } else {
+          // 取出第一個字元和最後一個數字。
+          firstChar = value.charAt(0).toUpperCase();
+          lastNum = value.charAt(9);
+        }
+        for (let i = 0; i < 26; i++) {
+          if (firstChar == letters[i]) {
+            firstNum = i + 10;
+            nums[0] = Math.floor(firstNum / 10);
+            nums[1] = firstNum - nums[0] * 10;
+            break;
+          }
+        }
+        // 執行加總計算
+        for (let i = 0; i < multiply.length; i++) {
+          if (i < 2) {
+            total += nums[i] * multiply[i];
+          } else {
+            total += parseInt(value.charAt(i - 1)) * multiply[i];
+          }
+        }
+        // 和最後一個數字比對
+        if (10 - (total % 10) != lastNum && 10 - (total % 10) != 10) {
+          return callback(new Error("格式錯誤"));
+        } else {
+          callback();
+        }
+      }
+    };
+
+    /* 性別驗證 */
+    let checkSex = (rule, value, callback) => {
+      let flag = this.userTemp.uid?.split("")[1] == 1 ? 1 : 0;
+      console.log(flag, value);
+      if (flag == value) {
+        callback();
+      } else {
+        return callback(new Error("身分證字號與性別不符"));
+      }
+    };
+
+    /* 手機驗證 */
+    let checkPhone = (rule, value, callback) => {
+      let phoneArr = value.split("");
+      if (phoneArr[0] == 0 && phoneArr[1] == 9) {
+        callback();
+      } else {
+        return callback(new Error("手機格式不符"));
+      }
+    };
+
+    /* 市話驗證 */
+    let checkTel = (rule, value, callback) => {
+      if (!value) {
+        callback();
+      } else {
+        let telArr = value.split("");
+
+        if (
+          telArr[0] == 0 &&
+          telArr[1] <= 8 &&
+          telArr[1] > 1 &&
+          telArr.length <= 10
+        ) {
+          callback();
+        } else {
+          return callback(new Error("市話格式不符"));
+        }
+      }
+    };
     return {
       /* loading */
       loadingActive: false,
@@ -500,11 +539,15 @@ export default {
         ],
         uid: [
           { required: true, message: "請輸入身分證字號", trigger: "blur" },
-          // { validator: checkUid, trigger: "blur" },
+          { validator: checkUid, trigger: "blur" },
         ],
-        sex: [{ required: true, message: "請選擇性別", trigger: "change" }],
+        sex: [
+          { required: true, message: "請選擇性別", trigger: "change" },
+          { validator: checkSex, trigger: "blur" },
+        ],
         phone: [
           { required: true, message: "請輸入手機號碼", trigger: "blur" },
+          { validator: checkPhone, tigger: "blur" },
           {
             min: 8,
             max: 13,
@@ -512,6 +555,7 @@ export default {
             trigger: "blur",
           },
         ],
+        tel: [{ validator: checkTel, trigger: "blur" }],
       },
 
       canUseRoles: [],
@@ -540,45 +584,126 @@ export default {
     },
   },
   methods: {
+    checkUid(value) {
+      // 依照字母的編號排列，存入陣列備用。
+      let letters = new Array(
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "X",
+        "Y",
+        "W",
+        "Z",
+        "I",
+        "O"
+      );
+      // 儲存各個乘數
+      let multiply = new Array(1, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+      let nums = new Array(2);
+      let firstChar;
+      let firstNum;
+      let lastNum;
+      let total = 0;
+      if (!value) {
+        return new Promise((res) => {
+          res("請輸入分證字號");
+        });
+      } else {
+        let regExpID = /^[a-z](1|2)\d{8}$/i;
+        if (value.search(regExpID) == -1) {
+          return new Promise((res) => {
+            res("格式錯誤");
+          });
+        } else {
+          // 取出第一個字元和最後一個數字。
+          firstChar = value.charAt(0).toUpperCase();
+          lastNum = value.charAt(9);
+        }
+        for (let i = 0; i < 26; i++) {
+          if (firstChar == letters[i]) {
+            firstNum = i + 10;
+            nums[0] = Math.floor(firstNum / 10);
+            nums[1] = firstNum - nums[0] * 10;
+            break;
+          }
+        }
+        // 執行加總計算
+        for (let i = 0; i < multiply.length; i++) {
+          if (i < 2) {
+            total += nums[i] * multiply[i];
+          } else {
+            total += parseInt(value.charAt(i - 1)) * multiply[i];
+          }
+        }
+        // 和最後一個數字比對
+        if (10 - (total % 10) != lastNum && 10 - (total % 10) != 10) {
+          return new Promise((res) => {
+            res("格式錯誤");
+          });
+        } else {
+          return new Promise((res) => {
+            res("success");
+          });
+        }
+      }
+    },
     /* 檢查身分證字號是否申請過用戶 */
     checkApplyUid() {
       const vm = this;
-      if (vm.applyTemp.UID) {
-        users.checkApplyUid(vm.applyTemp).then((res) => {
-          let isNew = res.code == 500;
-          vm.$alertT.fire({
-            icon: isNew ? "info" : "success",
-            title: isNew
-              ? "該身分證字號尚未申請用戶，請填寫基本資料"
-              : "請選擇欲申請身份",
-          });
+      // vm.checkUid();
+      vm.checkUid(vm.applyTemp.UID).then((msg) => {
+        if (msg == "success") {
+          users.checkApplyUid(vm.applyTemp).then((res) => {
+            let isNew = res.code == 500;
+            vm.$alertT.fire({
+              icon: isNew ? "info" : "success",
+              title: isNew
+                ? "該身分證字號尚未申請用戶，請填寫基本資料"
+                : "請選擇欲申請身份",
+            });
 
-          if (isNew) {
-            vm.applyDialog = false;
-            vm.userTemp.uid = vm.applyTemp.UID;
-            vm.handleAddOrEdit("add");
-          } else {
-            console.log(res.data[0]?.userId);
-            this.multipleSelection.push({ id: res.data[0]?.userId });
-            vm.applyDialog = false;
-            let map = ["selfpayuser", "bususer", "caseuser"];
-            let userRole = res.data.map((item) => item.userType);
-            vm.canUseRoles = map.filter(function (v) {
-              return userRole.indexOf(v) == -1;
-            });
-            console.log(vm.canUseRoles);
-            // vm.canUseRoles = ["selfpayuser", "bususer", "caseuser"];
-            vm.$nextTick(() => {
-              vm.rolesDialog = true;
-            });
-          }
-        });
-      } else {
-        vm.$alertT.fire({
-          icon: "error",
-          title: "請輸入身分證字號",
-        });
-      }
+            if (isNew) {
+              vm.applyDialog = false;
+              vm.userTemp.uid = vm.applyTemp.UID;
+              vm.handleAddOrEdit("add");
+            } else {
+              this.multipleSelection.push({ id: res.data[0]?.userId });
+              vm.applyDialog = false;
+              let map = ["selfpayuser", "bususer", "caseuser"];
+              let userRole = res.data.map((item) => item.userType);
+              vm.canUseRoles = map.filter(function (v) {
+                return userRole.indexOf(v) == -1;
+              });
+              console.log(vm.canUseRoles);
+              vm.$nextTick(() => {
+                vm.rolesDialog = true;
+              });
+            }
+          });
+        } else {
+          vm.$alertM.fire({
+            icon: "error",
+            title: msg,
+          });
+        }
+      });
     },
     // 是否為移動端
     isMobile() {
