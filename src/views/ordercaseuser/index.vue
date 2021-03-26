@@ -111,7 +111,7 @@
                     編輯
                   </button>
 
-                  <button class="orderButton orderCancel" v-if="order.status <= 2" @click="handleCancelOrder(order)">
+                  <button class="orderButton orderCancel" v-if="order.status <= 2 && hasButton('cancel')" @click="handleCancelOrder(order)">
                     取消
                   </button>
                   <el-button class="orderButton orderCancel" v-if="order.cancelReamrk === 'SYS_ORDERCANCEL_REMARK_DRIVER'" @click="handleViolation(order)">

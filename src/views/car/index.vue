@@ -3,11 +3,18 @@
     <sticky :className="'sub-navbar'">
       <div class="filter-container">
         <!-- 關鍵字搜尋 -->
-        <el-input style="width: 200px; margin-right: 0.5rem" size="mini" v-model="value" clearable placeholder="請輸入關鍵字"></el-input>
+        <el-input style="width: 200px; margin-right: 0.5rem" size="mini" v-model="listQuery.key" @keydown.enter.native="getList()" clearable placeholder="請輸入關鍵字"></el-input>
 
-        <!-- 公司選擇 -->
-        <el-select size="mini" v-model="value" clearable placeholder="請選擇公司">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <!-- 車行選擇 -->
+        <el-select filterable @change="getList()" size="mini" v-model="listQuery.orgId" clearable placeholder="請選擇車行">
+          <el-option :label="'全部車行'" :value="''"></el-option>
+          <el-option v-for="item in orgList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+
+        <!-- 車輛類別 -->
+        <el-select @change="getList()" size="mini" v-model="listQuery.carCategoryId" clearable placeholder="請選擇車輛類別">
+          <el-option :label="'全部車輛類別'" :value="''"></el-option>
+          <el-option v-for="item in carCategorysList" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <!-- 權限按鈕 -->
         <permission-btn moduleName="builderTables" size="mini" v-on:btn-event="onBtnClicked"></permission-btn>
@@ -69,7 +76,9 @@ import permissionBtn from "@/components/PermissionBtn";
 import Pagination from "@/components/Pagination";
 
 import * as cars from "@/api/cars";
+import * as category from "@/api/categorys";
 import * as drivers from "@/api/drivers";
+import * as login from "@/api/login";
 export default {
   name: "car",
   mixins: [pbMixins],
@@ -81,31 +90,12 @@ export default {
   },
   data() {
     return {
-      value: "",
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
       // 司機列表
       driverList: [],
+      // 車輛類別
+      carCategorysList: [],
+      // 組織列表
+      orgList: [],
       // main data
       list: [],
       listLoading: false,
@@ -114,7 +104,9 @@ export default {
         page: 1,
         limit: 20,
         key: undefined,
-        OrgId: "",
+        orgId: "",
+        carFrom: "",
+        carCategoryId: "",
       },
       multipleSelection: [], // 列表checkbox選中的值
     };
@@ -138,6 +130,7 @@ export default {
         return "right";
       }
     },
+
     // 獲取所有車輛
     getList() {
       const vm = this;
@@ -148,6 +141,7 @@ export default {
         vm.listLoading = false;
       });
     },
+
     //獲取所有司機
     getDrivers() {
       const vm = this;
@@ -158,6 +152,30 @@ export default {
       drivers.load(query).then((res) => {
         console.log(res);
         vm.driverList = res.data;
+      });
+    },
+
+    /* 獲取所有車輛類型 */
+    getCarCategorys() {
+      const vm = this;
+      let query = {
+        page: 1,
+        limit: 20,
+        TypeId: "SYS_CAR",
+      };
+      category.getSimpleList(query).then((res) => {
+        vm.carCategorysList = res.result.filter((car) => {
+          return (
+            car.value === "SYS_CAR_GENERAL" || car.value === "SYS_CAR_WEAL"
+          );
+        });
+      });
+    },
+
+    /* 獲取組織 */
+    getOrgs() {
+      login.getOrgs().then((res) => {
+        this.orgList = res.result;
       });
     },
 
@@ -262,6 +280,8 @@ export default {
   mounted() {
     this.getList();
     this.getDrivers();
+    this.getCarCategorys();
+    this.getOrgs();
   },
 };
 </script>

@@ -3,15 +3,21 @@
     <sticky :className="'sub-navbar'">
       <div class="filter-container">
         <!-- 關鍵字搜尋 -->
-        <el-input style="width: 200px; margin-right: 0.5rem" size="mini" v-model="value" clearable placeholder="請輸入關鍵字"></el-input>
-        <el-select size="mini" @change="end = end + 200" v-model="value" clearable placeholder="可否派發" style="margin-right: 0.5rem">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-input style="width: 200px; margin-right: 0.5rem" size="mini" v-model="listQuery.key" @keydown.enter.native="getList()" clearable placeholder="請輸入關鍵字"></el-input>
+
+        <!-- 可否派發 -->
+        <el-select size="mini" @change="getList()" v-model="listQuery.status" placeholder="可否派發" style="margin-right: 0.5rem">
+          <el-option :label="'全部派發狀態'" :value="null"></el-option>
+          <el-option :label="'可派發'" :value="1"></el-option>
+          <el-option :label="'不可派發'" :value="0"></el-option>
         </el-select>
 
         <!-- 公司選擇 -->
-        <el-select size="mini" v-model="value" clearable placeholder="請選擇公司">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-select filterable @change="getList()" size="mini" v-model="listQuery.orgId" clearable placeholder="請選擇車行">
+          <el-option :label="'全部車行'" :value="''"></el-option>
+          <el-option v-for="item in orgList" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
+
         <!-- 權限按鈕 -->
         <permission-btn moduleName="builderTables" size="mini" v-on:btn-event="onBtnClicked"></permission-btn>
       </div>
@@ -72,6 +78,7 @@ import Title from "@/components/ConsoleTableTitle";
 import permissionBtn from "@/components/PermissionBtn";
 import Pagination from "@/components/Pagination";
 
+import * as login from "@/api/login";
 import * as drivers from "@/api/drivers";
 export default {
   name: "driver",
@@ -84,29 +91,9 @@ export default {
   },
   data() {
     return {
-      value: "",
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕",
-        },
-        {
-          value: "选项2",
-          label: "双皮奶",
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎",
-        },
-        {
-          value: "选项4",
-          label: "龙须面",
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭",
-        },
-      ],
+      // 組織列表
+      orgList: [],
+
       // main data
       list: [],
       listLoading: false,
@@ -114,6 +101,9 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
+        status: null,
+        key: "",
+        orgId: "",
       },
       multipleSelection: [], // 列表checkbox選中的值
     };
@@ -138,6 +128,13 @@ export default {
         vm.list = res.data;
         vm.total = res.count;
         vm.listLoading = false;
+      });
+    },
+
+    /* 獲取組織 */
+    getOrgs() {
+      login.getOrgs().then((res) => {
+        this.orgList = res.result;
       });
     },
 
@@ -242,6 +239,7 @@ export default {
   },
   mounted() {
     this.getList();
+    this.getOrgs();
   },
 };
 </script>
