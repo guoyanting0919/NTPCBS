@@ -114,6 +114,9 @@
                   <button class="orderButton orderCancel" v-if="order.status <= 2 && hasButton('cancel')" @click="handleCancelOrder(order)">
                     取消
                   </button>
+                  <button class="orderButton orderCancel" v-if="order.status <= 2 && hasButton('cancel48') && is48Hr(order)" @click="handleCancelOrder(order)">
+                    取消(48H)
+                  </button>
                   <el-button class="orderButton orderCancel" v-if="order.cancelReamrk === 'SYS_ORDERCANCEL_REMARK_DRIVER'" @click="handleViolation(order)">
                     記點
                   </el-button>
@@ -644,6 +647,14 @@ export default {
         //   "remark": "string"
         // }
       }
+    },
+
+    /* 判斷是否為48小時訂單 */
+    is48Hr({ reserveDate }) {
+      console.log(reserveDate);
+      let now = moment().format("yyyy-MM-DD HH:mm:ss");
+      let plus48 = moment(now).add(2, "days").format("yyyy-MM-DD HH:mm:ss");
+      return !moment(plus48).isAfter(reserveDate);
     },
 
     /* 取消訂單 */
