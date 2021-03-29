@@ -66,6 +66,8 @@
 
           <el-table-column property="phone" label="手機" min-width="170" align="center"></el-table-column>
 
+          <el-table-column property="tel" label="市話" min-width="170" align="center"></el-table-column>
+
           <el-table-column property="setting" label="操作" :fixed="isMobile()" width="400">
             <template slot-scope="scope">
               <div class="buttonFlexBox">

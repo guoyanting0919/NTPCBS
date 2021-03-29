@@ -70,8 +70,8 @@
 
               <el-table-column align="center" :label="'操作'" width="230" class-name="small-padding fixed-width">
                 <template slot-scope="scope">
-                  <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">編輯</el-button>
-                  <el-button v-if="scope.row.status == 1" size="mini" type="danger" @click="handleModifyStatus(scope.row, 0)">停用</el-button>
+                  <el-button v-if="hasButton('btnEdit')" type="primary" size="mini" @click="handleUpdate(scope.row)">編輯</el-button>
+                  <el-button v-if="scope.row.status == 1 && hasButton('stop')" size="mini" type="danger" @click="handleModifyStatus(scope.row, 0)">停用</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -149,6 +149,7 @@
 </template>
 
 <script>
+import pbMixins from "@/mixins/permissionBtn.js";
 import { listToTreeSelect } from "@/utils";
 import * as accsssObjs from "@/api/accessObjs";
 import * as users from "@/api/users";
@@ -166,6 +167,7 @@ import elDragDialog from "@/directive/el-dragDialog";
 
 export default {
   name: "user",
+  mixins: [pbMixins],
   components: {
     Sticky,
     permissionBtn,

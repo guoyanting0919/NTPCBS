@@ -117,7 +117,7 @@
                   <button class="orderButton orderCancel" v-if="order.status <= 2 && hasButton('cancel48') && is48Hr(order)" @click="handleCancelOrder(order)">
                     取消(48H)
                   </button>
-                  <el-button class="orderButton orderCancel" v-if="order.cancelReamrk === 'SYS_ORDERCANCEL_REMARK_DRIVER'" @click="handleViolation(order)">
+                  <el-button class="orderButton orderCancel" v-if="order.cancelReamrk === 'SYS_ORDERCANCEL_REMARK_DRIVER' && hasButton('violation') " @click="handleViolation(order)">
                     記點
                   </el-button>
                 </div>
