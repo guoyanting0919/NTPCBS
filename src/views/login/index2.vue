@@ -148,6 +148,11 @@ export default {
           password: "CartoonsA",
         },
         {
+          name: "berry",
+          account: "berry",
+          password: "berry",
+        },
+        {
           name: "蠟筆小新車行",
           account: "CrayonChanShin",
           password: "CrayonChanShin",

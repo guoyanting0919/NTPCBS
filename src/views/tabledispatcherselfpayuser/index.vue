@@ -456,7 +456,9 @@ export default {
       vm.listQuery.StartDate = moment(vm.temp.dateRange?.[0]).format(
         "yyyy-MM-DD"
       );
-      vm.listQuery.EndDate = vm.listQuery.StartDate;
+      vm.listQuery.EndDate = moment(vm.temp.dateRange?.[1]).format(
+        "yyyy-MM-DD"
+      );
       orderSelfPayUser.LoadWithDespatch(vm.listQuery).then((res) => {
         vm.list = res.data.map((d) => {
           d.driver = "";

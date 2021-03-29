@@ -67,7 +67,7 @@
             <el-col :sm="12" :md="6">
               <el-form-item label="司機姓名" prop="driverInfoId">
                 <el-select v-model="temp.driverInfoId" placeholder="請選擇司機" style="width: 100%">
-                  <el-option v-for="driver in driverList" :value="driver.id" :label="driver.userName" :key="driver.id"></el-option>
+                  <el-option v-for="driver in driverList" :value="driver.id" :label="driver.name" :key="driver.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -246,6 +246,7 @@ export default {
       drivers.load(query).then((res) => {
         console.log(res);
         vm.driverList = res.data;
+        console.log(res.data);
       });
     },
     // 獲取車輛資料

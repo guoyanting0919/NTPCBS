@@ -106,7 +106,7 @@
                 </el-col>
 
                 <!-- v-show="!isUnitB" -->
-                <el-col :sm="24" :md="24" v-show="!isUnitB">
+                <el-col :sm="24" :md="24">
                   <div>
                     <span class="unitBTitle">優先搭乘車行排序 (請依序點擊完成排序)</span>
                     <div class="unitBContainer" v-if="roleOrgB">
