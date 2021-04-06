@@ -58,7 +58,7 @@
 
             <el-col :sm="24" :md="12">
               <el-form-item label="A單位" prop="orgAId">
-                <el-select v-model="temp.orgAId" placeholder="請選擇A單位" style="width: 100%">
+                <el-select filterable v-model="temp.orgAId" placeholder="請選擇A單位" style="width: 100%">
                   <el-option v-for="org in unitAs" :key="org.id" :value="org.id" :label="org.name"></el-option>
                 </el-select>
               </el-form-item>

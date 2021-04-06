@@ -122,7 +122,7 @@
             </el-col>
             <el-col :sm="24" :md="12">
               <el-form-item label="管理單位" prop="orgAId">
-                <el-select filterable v-model="temp.orgAId" placeholder="請選擇管理單位" style="width: 100%">
+                <el-select :disabled='isOrgA' filterable v-model="temp.orgAId" placeholder="請選擇管理單位" style="width: 100%">
                   <el-option v-for="org in unitAs" :key="org.id" :value="org.id" :label="org.name"></el-option>
                 </el-select>
               </el-form-item>
@@ -313,6 +313,7 @@ export default {
       unitAs: "",
       unitAId: ".0.1.1.",
       // 表單相關
+      isOrgA: false,
       labelPosition: "top",
       basicTemp: {
         name: "",
@@ -414,6 +415,7 @@ export default {
         vm.unitAs = res.result;
         let isOrgA = res.result.map((u) => u.id).includes(this.defaultorgid);
         if (isOrgA) vm.temp.orgAId = this.defaultorgid;
+        vm.isOrgA = isOrgA;
         console.log(isOrgA);
       });
     },

@@ -14,9 +14,9 @@
       <el-table ref="mainTable" :key="tableKey" :data="list" v-loading="listLoading" border fit highlight-current-row style="width: 100%;" height="calc(100% - 52px)" @row-click="rowClick" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
 
-        <el-table-column :label="'實例編碼'" min-width="120px">
+        <el-table-column :label="'申請單位'" min-width="120px">
           <template slot-scope="scope">
-            <span>{{scope.row.code}}</span>
+            <span>{{scope.row.orgName}}</span>
           </template>
         </el-table-column>
 

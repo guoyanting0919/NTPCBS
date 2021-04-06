@@ -441,7 +441,7 @@ export default {
     },
     handleUpdate(row) {
       // 彈出編輯框
-      console.log(row);
+      if (!this.hasButton("btnEdit")) return;
       this.temp = Object.assign({}, row); // copy obj
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
